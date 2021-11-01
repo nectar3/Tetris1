@@ -55,7 +55,8 @@ public class Block : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            if (CheckSide(Vector3.left))
+
+            if (isItOkToGoLeft())
             {
                 EraseGrid();
                 transform.position += Vector3.left;
@@ -64,7 +65,7 @@ public class Block : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            if (CheckSide(Vector3.right))
+            if (isItOkToGoRight())
             {
                 EraseGrid();
                 transform.position += Vector3.right;
@@ -73,6 +74,8 @@ public class Block : MonoBehaviour
             }
         }
     }
+
+
 
 
     bool CheckSide(Vector3 dir)
@@ -94,6 +97,49 @@ public class Block : MonoBehaviour
     }
 
 
+    int GetLeftestDotsPosX()
+    {
+        int min = int.MaxValue;
+        for (int i = 0; i < 4; i++)
+            min = Mathf.Min(min, (int)dots[i].transform.position.x);
+        return min;
+    }
+
+    int GetRightestDotsPosX()
+    {
+        int max = int.MinValue;
+        for (int i = 0; i < 4; i++)
+            max = Mathf.Max(max, (int)dots[i].transform.position.x);
+        return max;
+    }
+
+    bool isItOkToGoLeft()
+    {
+        var leftX = GetLeftestDotsPosX();
+        if (leftX <= 0)
+            return false;
+        for (int i = 0; i < 4; i++)
+        {
+            if (Grid.I.IsThereLeftSideDot(dots[i].transform.position))
+                return false;
+        }
+        return true;
+    }
+    bool isItOkToGoRight()
+    {
+        var rightx = GetRightestDotsPosX();
+        if (rightx >= Grid.I.Size().x - 1)
+            return false;
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (Grid.I.IsThereRightSideDot(dots[i].transform.position))
+                return false;
+        }
+        return true;
+    }
+
+
     /// <summary>
     /// 아래로 진행해도 되면 true
     /// </summary>
@@ -105,9 +151,6 @@ public class Block : MonoBehaviour
 
         for (int i = 0; i < 4; i++)
         {
-            if (dots[i].transform.position.y != bottomY)
-                continue;
-
             if (Grid.I.IsThereBottomDot(dots[i].transform.position))
                 return false;
         }
@@ -133,7 +176,7 @@ public class Block : MonoBehaviour
 
     void SynchGrid()
     {
-        Debug.Log("SynchGrid");
+        //Debug.Log("SynchGrid");
 
         for (int i = 0; i < 4; i++)
         {
@@ -148,7 +191,7 @@ public class Block : MonoBehaviour
     }
     void EraseGrid()
     {
-        Debug.Log("EraseGrid");
+        //Debug.Log("EraseGrid");
         for (int i = 0; i < 4; i++)
         {
             var pos = dots[i].transform.position;
@@ -158,23 +201,34 @@ public class Block : MonoBehaviour
         }
     }
 
+    //TODO 먼저 내려가지 말고, 일단 아래쪽 체크하고 내리기
+
     IEnumerator MoveCorou()
     {
         while (true)
         {
             yield return new WaitForSeconds(downGapSec);
-            Debug.Log("MoveCorou");
-
-            EraseGrid();
-            transform.position = transform.position + new Vector3(0, -1, 0);
-            SynchGrid();
+            //Debug.Log("MoveCorou");
 
             if (IsItOkToGoDownSide() == false)
             {
                 isDone = true;
+                SetGridDone();
                 Manager.I.MakeNewBlock();
                 break;
             }
+
+            EraseGrid();
+            transform.position = transform.position + new Vector3(0, -1, 0);
+            SynchGrid();
+        }
+    }
+
+    void SetGridDone()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            Grid.I.SetGridDone(dots[i].transform.position);
         }
     }
 

@@ -57,9 +57,11 @@ public class Manager : MonoBehaviour
         }
     }
 
+    int c = 0;
     public void MakeNewBlock()
     {
         var block = Instantiate(BlockPref, spawnPoint.position, Quaternion.identity);
+        block.name = "block" + c++;
 
     }
 

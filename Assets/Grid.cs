@@ -8,7 +8,6 @@ public class Grid
     public Section[,] grid;
 
 
-
     public Grid()
     {
         grid = new Section[10, 20];
@@ -45,16 +44,40 @@ public class Grid
         return new Vector2Int(grid.GetLength(0), grid.GetLength(1));
     }
 
-    //TODO: 좌우 이동시 블럭체크
 
+
+    public void SetGridDone(Vector3 pos)
+    {
+        grid[(int)pos.x, (int)pos.y].IsDot = 2;
+    }
 
     public bool IsThereBottomDot(Vector3 pos)
     {
         if ((int)pos.y <= 0)
             return true;
-        return grid[(int)pos.x, (int)pos.y - 1].IsDot == 1;
+        if ((int)pos.y - 1 >= Size().y - 1)
+            return false;
+        return grid[(int)pos.x, (int)pos.y - 1].IsDot == 2;
     }
 
+    public bool IsThereLeftSideDot(Vector3 pos)
+    {
+        if ((int)pos.y - 1 >= Size().y - 1)
+            return false;
+        if ((int)pos.x <= 0)
+            return true;
+        return grid[(int)pos.x - 1, (int)pos.y].IsDot == 2;
+    }
+    public bool IsThereRightSideDot(Vector3 pos)
+    {
+        //Debug.Log("IsThereRightSideDot: " + pos);
+
+        if ((int)pos.y - 1 >= Size().y - 1)
+            return false;
+        if ((int)pos.x >= Size().x - 1)
+            return true;
+        return grid[(int)pos.x + 1, (int)pos.y].IsDot == 2;
+    }
 
     public string Tostring()
     {
