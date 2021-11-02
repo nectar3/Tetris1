@@ -14,6 +14,8 @@ public class Block : MonoBehaviour
 
     GameObject[] dots = new GameObject[4];
 
+    [SerializeField]
+    public Vector2[] DotsLocalPosition = new Vector2[4];
 
     bool isDone = false;
 
@@ -26,23 +28,93 @@ public class Block : MonoBehaviour
 
     void Init()
     {
+        for (int i = 0; i < DotsLocalPosition.Length; i++)
+        {
+            dots[i] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
+            dots[i].transform.localPosition = new Vector2(DotsLocalPosition[i].x, DotsLocalPosition[i].y);
+        }
 
-        dots[0] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        dots[0].transform.localPosition = new Vector2(-1, 1);
 
-        dots[1] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        dots[1].transform.localPosition = new Vector2(-1, 0);
+        //dots[0] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
+        //dots[0].transform.localPosition = new Vector2(-1, 1);
 
-        dots[2] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        dots[2].transform.localPosition = new Vector2(0, 0);
+        //dots[1] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
+        //dots[1].transform.localPosition = new Vector2(-1, 0);
 
-        dots[3] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        dots[3].transform.localPosition = new Vector2(1, 0);
+        //dots[2] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
+        //dots[2].transform.localPosition = new Vector2(0, 0);
+
+        //dots[3] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
+        //dots[3].transform.localPosition = new Vector2(1, 0);
 
     }
+    public void TurnRight()
+    {
+        var canLocal = GetTurnRightAndMoveHorizontalLocalPosition();
+        if (canLocal.Count == 4)
+        {
+            EraseGrid();
+            for (int i = 0; i < 4; i++)
+            {
+                dots[i].transform.localPosition = canLocal[i];
 
+            }
+            Debug.Log(dots[0].transform.localPosition);
 
+            SynchGrid();
+        }
+    }
 
+    List<Vector3> GetTurnRightLocalPosition()
+    {
+        List<Vector3> turned = new List<Vector3>();
+        for (int i = 0; i < 4; i++)
+        {
+            var loc = Quaternion.Euler(0, 0, -90) * dots[i].transform.localPosition;
+            loc.x = Mathf.RoundToInt(loc.x);
+            loc.y = Mathf.RoundToInt(loc.y);
+            turned.Add(loc);
+        }
+        return turned;
+    }
+    bool isItOkTurnRight()
+    {
+        var locs = GetTurnRightLocalPosition();
+        for (int i = 0; i < 4; i++)
+        {
+            if (!Grid.I.CanPutDot(dots[i].transform.position + locs[i]))
+                return false;
+        }
+        return true;
+    }
+
+    // 회전 후 되는 포지션 나올때까지 횡이동 4번 시행 후 가져오기
+    List<Vector3> GetTurnRightAndMoveHorizontalLocalPosition()
+    {
+        List<Vector3> canPutlocs = new List<Vector3>();
+
+        int[] Xoffset = { 0, 1, -1, 2, -2 };
+        var turnedLocal = GetTurnRightLocalPosition();
+        for (int i = 0; i < Xoffset.Length; i++)
+        {
+            bool thisPosIsGood = true;
+            for (int k = 0; k < 4; k++)
+            {
+                if (!Grid.I.CanPutDot(transform.position + turnedLocal[k] + new Vector3(Xoffset[i], 0, 0)))
+                {
+                    thisPosIsGood = false;
+                    break;
+                }
+            }
+            if (thisPosIsGood)
+            {
+                for (int k = 0; k < 4; k++)
+                    canPutlocs.Add(turnedLocal[k] + new Vector3(Xoffset[i], 0, 0));
+                break;
+            }
+        }
+        return canPutlocs;
+    }
 
     private void Update()
     {
@@ -55,7 +127,6 @@ public class Block : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-
             if (isItOkToGoLeft())
             {
                 EraseGrid();
@@ -77,16 +148,40 @@ public class Block : MonoBehaviour
 
 
 
-
-    bool CheckSide(Vector3 dir)
+    bool isItOkToGoLeft()
     {
+        var leftX = GetLeftestDotsPosX();
         for (int i = 0; i < 4; i++)
         {
-            if (dots[i].transform.position.x + dir.x < 0 || dots[i].transform.position.x + dir.x > 9)
+            if (!Grid.I.CanPutDot(dots[i].transform.position + Vector3.left))
                 return false;
         }
         return true;
     }
+    bool isItOkToGoRight()
+    {
+        var rightx = GetRightestDotsPosX();
+        for (int i = 0; i < 4; i++)
+        {
+            if (!Grid.I.CanPutDot(dots[i].transform.position + Vector3.right))
+                return false;
+        }
+        return true;
+    }
+
+    // 아래로 진행해도 되면 true
+    bool IsItOkToGoDownSide()
+    {
+        var bottomY = GetBottomDotsPosY();
+        for (int i = 0; i < 4; i++)
+        {
+            if (!Grid.I.CanPutDot(dots[i].transform.position + Vector3.down))
+                return false;
+        }
+        return true;
+    }
+
+
 
     int GetBottomDotsPosY()
     {
@@ -113,95 +208,25 @@ public class Block : MonoBehaviour
         return max;
     }
 
-    bool isItOkToGoLeft()
-    {
-        var leftX = GetLeftestDotsPosX();
-        if (leftX <= 0)
-            return false;
-        for (int i = 0; i < 4; i++)
-        {
-            if (Grid.I.IsThereLeftSideDot(dots[i].transform.position))
-                return false;
-        }
-        return true;
-    }
-    bool isItOkToGoRight()
-    {
-        var rightx = GetRightestDotsPosX();
-        if (rightx >= Grid.I.Size().x - 1)
-            return false;
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (Grid.I.IsThereRightSideDot(dots[i].transform.position))
-                return false;
-        }
-        return true;
-    }
-
-
-    /// <summary>
-    /// 아래로 진행해도 되면 true
-    /// </summary>
-    bool IsItOkToGoDownSide()
-    {
-        var bottomY = GetBottomDotsPosY();
-        if (bottomY > Grid.I.Size().y)
-            return true;
-
-        for (int i = 0; i < 4; i++)
-        {
-            if (Grid.I.IsThereBottomDot(dots[i].transform.position))
-                return false;
-        }
-        return true;
-    }
-
-
-    public void TurnRight()
-    {
-        EraseGrid();
-
-        for (int i = 0; i < 4; i++)
-        {
-            var loc = Quaternion.Euler(0, 0, -90) * dots[i].transform.localPosition;
-            loc.x = Mathf.RoundToInt(loc.x);
-            loc.y = Mathf.RoundToInt(loc.y);
-            dots[i].transform.localPosition = loc;
-        }
-        SynchGrid();
-
-    }
-
-
     void SynchGrid()
     {
-        //Debug.Log("SynchGrid");
-
         for (int i = 0; i < 4; i++)
         {
             var pos = dots[i].transform.position;
-
-            if ((pos.x >= 0 && pos.x < Grid.I.Size().x)
-                && (pos.y >= 0 && pos.y < Grid.I.Size().y))
-            {
-                Grid.I.grid[(int)pos.x, (int)pos.y].IsDot = 1;
-            }
+            Grid.I.grid[(int)pos.x, (int)pos.y].IsDot = 1;
         }
     }
     void EraseGrid()
     {
-        //Debug.Log("EraseGrid");
         for (int i = 0; i < 4; i++)
         {
             var pos = dots[i].transform.position;
-            if ((pos.x >= 0 && pos.x < Grid.I.Size().x)
-                && (pos.y >= 0 && pos.y < Grid.I.Size().y))
-                Grid.I.grid[(int)pos.x, (int)pos.y].IsDot = 0;
+            Grid.I.grid[(int)pos.x, (int)pos.y].IsDot = 0;
         }
     }
 
-    //TODO 먼저 내려가지 말고, 일단 아래쪽 체크하고 내리기
+    // TODO 회전시 밀리는 기능 
+
 
     IEnumerator MoveCorou()
     {

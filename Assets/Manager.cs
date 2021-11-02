@@ -70,8 +70,9 @@ public class Manager : MonoBehaviour
         var style = new GUIStyle();
         style.fontSize = 15;
         style.normal.textColor = Color.white;
+        int offset_up = 15;
         if (Grid.I != null)
-            Handles.Label(transform.position + Vector3.up * 6, Grid.I.Tostring(), style);
+            Handles.Label(transform.position + Vector3.up * offset_up, Grid.I.Tostring(), style);
     }
 
 

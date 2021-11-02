@@ -5,45 +5,34 @@ using UnityEngine;
 
 public class Grid
 {
-    public Section[,] grid;
+    public Dot[,] grid;
 
 
     public Grid()
     {
-        grid = new Section[10, 20];
-        Debug.Log("grid constructor size: " + Size());
+        grid = new Dot[10, 25]; // 실제 판 크기는 10 by 20 이지만 약간 위에서 블록생성하므로 여유있게
+        Debug.Log("grid constructor size: " + Size);
 
-        for (int i = 0; i < Size().y; i++)
+        for (int i = 0; i < Size.y; i++)
         {
-            for (int j = 0; j < Size().x; j++)
+            for (int j = 0; j < Size.x; j++)
             {
-                grid[j, i] = new Section();
+                grid[j, i] = new Dot();
             }
         }
-
     }
-
-
-
-
     private static Grid instance = null;
     public static Grid I
     {
         get
         {
             if (instance == null)
-            {
                 instance = new Grid();
-            }
             return instance;
         }
     }
 
-    public Vector2Int Size()
-    {
-        return new Vector2Int(grid.GetLength(0), grid.GetLength(1));
-    }
-
+    public Vector2Int Size => new Vector2Int(grid.GetLength(0), grid.GetLength(1));
 
 
     public void SetGridDone(Vector3 pos)
@@ -51,38 +40,22 @@ public class Grid
         grid[(int)pos.x, (int)pos.y].IsDot = 2;
     }
 
-    public bool IsThereBottomDot(Vector3 pos)
+
+    public bool CanPutDot(Vector3 pos)
     {
-        if ((int)pos.y <= 0)
-            return true;
-        if ((int)pos.y - 1 >= Size().y - 1)
+        if ((int)pos.y < 0 || (int)pos.y >= Size.y)
             return false;
-        return grid[(int)pos.x, (int)pos.y - 1].IsDot == 2;
+        if ((int)pos.x < 0 || (int)pos.x >= Size.x)
+            return false;
+        return grid[(int)pos.x, (int)pos.y].IsDot != 2;
     }
 
-    public bool IsThereLeftSideDot(Vector3 pos)
-    {
-        if ((int)pos.y - 1 >= Size().y - 1)
-            return false;
-        if ((int)pos.x <= 0)
-            return true;
-        return grid[(int)pos.x - 1, (int)pos.y].IsDot == 2;
-    }
-    public bool IsThereRightSideDot(Vector3 pos)
-    {
-        //Debug.Log("IsThereRightSideDot: " + pos);
 
-        if ((int)pos.y - 1 >= Size().y - 1)
-            return false;
-        if ((int)pos.x >= Size().x - 1)
-            return true;
-        return grid[(int)pos.x + 1, (int)pos.y].IsDot == 2;
-    }
 
     public string Tostring()
     {
         string str = "";
-        var size = Size();
+        var size = Size;
         for (int i = size.y - 1; i >= 0; i--)
         {
             string line = "";
@@ -97,11 +70,11 @@ public class Grid
 
 
 // grid 상의 네모 한칸( 
-public class Section
+public class Dot
 {
     public int IsDot = 0;
 
-    public Section()
+    public Dot()
     {
     }
 

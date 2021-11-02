@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1471544663050911086}
   - component: {fileID: -7640516092387677000}
   m_Layer: 0
-  m_Name: Block
+  m_Name: Block_L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,3 +46,8 @@ MonoBehaviour:
   DotsPref: {fileID: 4969624384879370860, guid: 20bdfc48698ad8d46883f000350b77a0, type: 3}
   point: {fileID: 0}
   downGapSec: 0.2
+  DotsLocalPosition:
+  - {x: -1, y: 1}
+  - {x: -1, y: 0}
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
