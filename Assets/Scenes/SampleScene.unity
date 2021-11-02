@@ -317,7 +317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87cbe542d274644419755484559f3678, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BlockPref: {fileID: 7383755478474506461, guid: 73f4f430c4e98cb47a87719c82d50a2e, type: 3}
+  BlockPref: {fileID: 7383755478474506461, guid: d70eadc4cd42f8441a320402d9345292, type: 3}
   spawnPoint: {fileID: 778260342}
   textGrid: {fileID: 732804953}
 --- !u!4 &580138056

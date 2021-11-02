@@ -11,6 +11,7 @@ public class Block : MonoBehaviour
     public Transform point;
 
     public float downGapSec = 0.3f;
+    public bool Is360DegreeFlip = true; // 4방향 회전인지 일자블럭처럼 90도 회전 후 원위치인지
 
     GameObject[] dots = new GameObject[4];
 
@@ -18,6 +19,8 @@ public class Block : MonoBehaviour
     public Vector2[] DotsLocalPosition = new Vector2[4];
 
     bool isDone = false;
+
+    bool isTurned = false;
 
     void Start()
     {
@@ -35,33 +38,25 @@ public class Block : MonoBehaviour
         }
 
 
-        //dots[0] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        //dots[0].transform.localPosition = new Vector2(-1, 1);
-
-        //dots[1] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        //dots[1].transform.localPosition = new Vector2(-1, 0);
-
-        //dots[2] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        //dots[2].transform.localPosition = new Vector2(0, 0);
-
-        //dots[3] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
-        //dots[3].transform.localPosition = new Vector2(1, 0);
-
     }
     public void TurnRight()
     {
-        var canLocal = GetTurnRightAndMoveHorizontalLocalPosition();
-        if (canLocal.Count == 4)
+        var Xoffset = GetTurnRightAndMoveHorizontalXOffset();
+        if (Xoffset != null)
         {
+            var turnedLocal = GetTurnRightLocalPosition();
+
             EraseGrid();
             for (int i = 0; i < 4; i++)
             {
-                dots[i].transform.localPosition = canLocal[i];
-
+                dots[i].transform.localPosition = turnedLocal[i];
             }
-            Debug.Log(dots[0].transform.localPosition);
+            transform.position = transform.position + new Vector3((float)Xoffset, 0, 0);
 
+            Debug.Log(dots[0].transform.localPosition);
             SynchGrid();
+
+            isTurned = !isTurned; // 토글
         }
     }
 
@@ -70,7 +65,7 @@ public class Block : MonoBehaviour
         List<Vector3> turned = new List<Vector3>();
         for (int i = 0; i < 4; i++)
         {
-            var loc = Quaternion.Euler(0, 0, -90) * dots[i].transform.localPosition;
+            var loc = Quaternion.Euler(0, 0, (!Is360DegreeFlip && isTurned) ? 90 : -90) * dots[i].transform.localPosition;
             loc.x = Mathf.RoundToInt(loc.x);
             loc.y = Mathf.RoundToInt(loc.y);
             turned.Add(loc);
@@ -88,11 +83,10 @@ public class Block : MonoBehaviour
         return true;
     }
 
-    // 회전 후 되는 포지션 나올때까지 횡이동 4번 시행 후 가져오기
-    List<Vector3> GetTurnRightAndMoveHorizontalLocalPosition()
+    // 횡이동은 block 자체에서 적용
+    // 회전 후 되는 포지션 나올때까지 횡이동 5번(Xoffset) 시행후 되는 offset리턴. 회전 자체가 안되면 null
+    int? GetTurnRightAndMoveHorizontalXOffset()
     {
-        List<Vector3> canPutlocs = new List<Vector3>();
-
         int[] Xoffset = { 0, 1, -1, 2, -2 };
         var turnedLocal = GetTurnRightLocalPosition();
         for (int i = 0; i < Xoffset.Length; i++)
@@ -107,13 +101,9 @@ public class Block : MonoBehaviour
                 }
             }
             if (thisPosIsGood)
-            {
-                for (int k = 0; k < 4; k++)
-                    canPutlocs.Add(turnedLocal[k] + new Vector3(Xoffset[i], 0, 0));
-                break;
-            }
+                return Xoffset[i];
         }
-        return canPutlocs;
+        return null;
     }
 
     private void Update()
@@ -225,7 +215,6 @@ public class Block : MonoBehaviour
         }
     }
 
-    // TODO 회전시 밀리는 기능 
 
 
     IEnumerator MoveCorou()
