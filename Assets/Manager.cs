@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -18,7 +18,7 @@ public class Manager : MonoBehaviour
     public GameObject panelGameOver;
     public Grid grid;
 
-    public float blockDownSec = 0.4f; // ºí·° ³»·Á¿À´Â ½Ã°£°£°Ý
+    public float blockDownSec = 0.4f; // ë¸”ëŸ­ ë‚´ë ¤ì˜¤ëŠ” ì‹œê°„ê°„ê²©
 
     int score = 0;
 
@@ -27,7 +27,6 @@ public class Manager : MonoBehaviour
         var grid = Grid.I; // init
 
         MakeNewBlock();
-        //dd
     }
 
     private static Manager instance = null;
