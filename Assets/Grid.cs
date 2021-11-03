@@ -88,31 +88,45 @@ public class Grid
     }
 
 
-    public IEnumerator BlinkLine(int y)
+    public IEnumerator BlinkLines(List<int> linesY)
     {
         int c = 0;
         while (c++ < 8)
         {
-            for (int i = 0; i < Size.x; i++)
+            foreach (var y in linesY)
             {
-                if (grid[i, y].go)
-                    grid[i, y].go.GetComponent<Dots>().SetColor((c % 2 == 1) ? new Color(64, 142, 64) : Color.white);
+                SetLineColor(y, c % 2 == 1 ? new Color(500 / 255f, 500 / 255f, 500 / 255f) : Color.white); // 0~1 값인데 2를 넣으면 허옇게됨.
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(0.05f);
+        }
+        foreach (var y in linesY)
+        {
+            DeleteLineAndRearrange(y);
+        }
+        Manager.I.MakeNewBlock();
+    }
+
+
+    void SetLineColor(int y, Color col)
+    {
+        for (int i = 0; i < Size.x; i++)
+        {
+            if (grid[i, y].go)
+                grid[i, y].go.GetComponent<Dots>().SetColor(col);
         }
     }
 
 
-    public void CheckAllLineComplete()
+    public List<int> GetCompletedLineYPos()
     {
-        for (int i = 0; i < Size.y; i++)
+        List<int> comple = new List<int>();
+        for (int i = Size.y - 1; i >= 0; i--) // 맨 위에서부터 삭제하기위해 역순으로
         {
             var isCompleted = IsThisLineComplete(i);
             if (isCompleted)
-            {
-                DeleteLineAndRearrange(i);
-            }
+                comple.Add(i);
         }
+        return comple;
     }
 
     bool IsThisLineComplete(int y)

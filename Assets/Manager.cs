@@ -56,18 +56,17 @@ public class Manager : MonoBehaviour
 
     public void CurBlockPutted()
     {
-        Grid.I.CheckAllLineComplete();
+        var completedLinesY = Grid.I.GetCompletedLineYPos();
 
         if (Grid.I.CheckDie())
         {
             Time.timeScale = 0;
+            return;
         }
-
-
-        //StartCoroutine(Grid.I.BlinkLine());
-
-
-        Manager.I.MakeNewBlock();
+        if (completedLinesY.Count > 0)
+            StartCoroutine(Grid.I.BlinkLines(completedLinesY));
+        else
+            Manager.I.MakeNewBlock();
     }
 
 
