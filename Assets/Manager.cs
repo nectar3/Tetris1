@@ -28,17 +28,8 @@ public class Manager : MonoBehaviour
 
         MakeNewBlock();
 
-        StartCoroutine(ShowGridText());
     }
-    IEnumerator ShowGridText()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(0.1f);
-            var str = Grid.I.Tostring();
-            textGrid.SetText(str);
-        }
-    }
+
     private static Manager instance = null;
     void Awake()
     {
