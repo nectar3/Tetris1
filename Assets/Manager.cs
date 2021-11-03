@@ -13,8 +13,14 @@ public class Manager : MonoBehaviour
     public Transform spawnPoint;
     public GameObject dotsParent;
 
+    public TextMeshProUGUI text_score;
+
     public TextMeshProUGUI textGrid;
     public Grid grid;
+
+    public float blockDownSec = 0.4f; // 블럭 내려오는 시간간격
+
+    int score = 0;
 
     void Start()
     {
@@ -64,9 +70,14 @@ public class Manager : MonoBehaviour
             return;
         }
         if (completedLinesY.Count > 0)
+        {
+            score = score + completedLinesY.Count;
+            text_score.SetText("Score: " + score);
+
             StartCoroutine(Grid.I.BlinkLines(completedLinesY));
+        }
         else
-            Manager.I.MakeNewBlock();
+            MakeNewBlock();
     }
 
 
@@ -75,8 +86,8 @@ public class Manager : MonoBehaviour
     {
         var block = Instantiate(BlockPref, spawnPoint.position, Quaternion.identity);
         block.name = "block" + c++;
-
         block.GetComponent<Block>().dotsParent = dotsParent;
+        block.GetComponent<Block>().downGapSec = blockDownSec;
     }
 
     void OnDrawGizmos()

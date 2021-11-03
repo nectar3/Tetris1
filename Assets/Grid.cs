@@ -22,16 +22,7 @@ public class Grid
             }
         }
     }
-    //void Awake()
-    //{
-    //    if (null == instance)
-    //    {
-    //        instance = this;
-    //        DontDestroyOnLoad(this.gameObject);
-    //    }
-    //    else
-    //        Destroy(this.gameObject);
-    //}
+
     private static Grid instance = null;
     public static Grid I
     {
@@ -107,14 +98,8 @@ public class Grid
     }
 
 
-    void SetLineColor(int y, Color col)
-    {
-        for (int i = 0; i < Size.x; i++)
-        {
-            if (grid[i, y].go)
-                grid[i, y].go.GetComponent<Dots>().SetColor(col);
-        }
-    }
+    // 스페이스바 눌렀을때 블럭이 처음 부딪히는 y 위치
+
 
 
     public List<int> GetCompletedLineYPos()
@@ -170,7 +155,14 @@ public class Grid
     }
 
 
-
+    void SetLineColor(int y, Color col)
+    {
+        for (int i = 0; i < Size.x; i++)
+        {
+            if (grid[i, y].go)
+                grid[i, y].go.GetComponent<Dots>().SetColor(col);
+        }
+    }
     public void SetDotGo(Vector3 pos, GameObject go)
     {
         if (grid[(int)pos.x, (int)pos.y].IsDot == 2)

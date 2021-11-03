@@ -10,6 +10,7 @@ public class Block : MonoBehaviour
     public GameObject DotsPref;
     public Transform point;
 
+    [HideInInspector]
     public float downGapSec = 0.3f;
     public bool Is360DegreeFlip = true; // 4방향 회전인지 일자블럭처럼 90도 회전 후 원위치인지
     public GameObject dotsParent;
@@ -20,7 +21,6 @@ public class Block : MonoBehaviour
     public Vector2[] DotsLocalPosition = new Vector2[4];
 
     bool isDone = false;
-
     bool isTurned = false;
 
     void Start()
@@ -29,10 +29,6 @@ public class Block : MonoBehaviour
         StartCoroutine(MoveCorou());
     }
 
-
-    //TODO: <줄삭제 구현> grid에서 역참조해서 BLock의 dot을 삭제. Dic 사용?
-    // 1. 블럭 fix 시 각 dots 4개 
-
     void Init()
     {
         for (int i = 0; i < DotsLocalPosition.Length; i++)
@@ -40,9 +36,9 @@ public class Block : MonoBehaviour
             dots[i] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
             dots[i].transform.localPosition = new Vector2(DotsLocalPosition[i].x, DotsLocalPosition[i].y);
         }
-
-
     }
+
+
     public void TurnRight()
     {
         var Xoffset = GetTurnRightAndMoveHorizontalXOffset();
@@ -138,9 +134,38 @@ public class Block : MonoBehaviour
 
             }
         }
+        else if (Input.GetKeyDown(KeyCode.Space)) //TODO:
+        {
+            var y_offset = GetFirstHitYPos();
+
+            EraseGrid();
+            transform.position -= new Vector3(0, y_offset, 0);
+            SynchGrid();
+
+            isDone = true;
+            SetGridDone();
+            Manager.I.CurBlockPutted();
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            BlockDown();
+        }
     }
 
-
+    // 스페이스바 눌렀을때: 블럭 현재위치부터 한칸씩 아래로 내려보다가, 막히는 지점의 바로 위가 놓아질 부분이다(y_offset - 1)
+    public int GetFirstHitYPos()
+    {
+        int y_offset = 1;
+        for (; ; )
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                if (!Grid.I.CanPutDot(transform.position + dots[i].transform.localPosition - new Vector3(0, y_offset, 0)))
+                    return y_offset - 1;
+            }
+            y_offset++;
+        }
+    }
 
     bool isItOkToGoLeft()
     {
@@ -227,19 +252,26 @@ public class Block : MonoBehaviour
         {
             yield return new WaitForSeconds(downGapSec);
 
-            if (IsItOkToGoDownSide() == false)
-            {
-                isDone = true;
-                SetGridDone();
-                Manager.I.CurBlockPutted();
+            if (BlockDown() == false)
                 break;
-            }
-
-            EraseGrid();
-            transform.position = transform.position + new Vector3(0, -1, 0);
-            SynchGrid();
         }
     }
+
+    bool BlockDown()
+    {
+        if (IsItOkToGoDownSide() == false)
+        {
+            isDone = true;
+            SetGridDone();
+            Manager.I.CurBlockPutted();
+            return false;
+        }
+        EraseGrid();
+        transform.position = transform.position + new Vector3(0, -1, 0);
+        SynchGrid();
+        return true;
+    }
+
 
     void SetGridDone()
     {
