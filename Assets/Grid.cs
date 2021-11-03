@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,11 +7,11 @@ public class Grid
 {
     public Dot[,] grid;
 
-    public int Y_ceiling = 20; // ½ÇÁ¦ ÆÇ ³ôÀÌ
+    public int Y_ceiling = 20; // ì‹¤ì œ íŒ ë†’ì´
 
     public Grid()
     {
-        grid = new Dot[10, 25]; // ½ÇÁ¦ ÆÇ Å©±â´Â 10 by 20 ÀÌÁö¸¸ ¾à°£ À§¿¡¼­ ºí·Ï»ı¼ºÇÏ¹Ç·Î ¿©À¯ÀÖ°Ô
+        grid = new Dot[10, 25]; // ì‹¤ì œ íŒ í¬ê¸°ëŠ” 10 by 20 ì´ì§€ë§Œ ì•½ê°„ ìœ„ì—ì„œ ë¸”ë¡ìƒì„±í•˜ë¯€ë¡œ ì—¬ìœ ìˆê²Œ
         Debug.Log("grid constructor size: " + Size);
 
         for (int i = 0; i < Size.y; i++)
@@ -86,7 +86,7 @@ public class Grid
         {
             foreach (var y in linesY)
             {
-                SetLineColor(y, c % 2 == 1 ? new Color(500 / 255f, 500 / 255f, 500 / 255f) : Color.white); // 0~1 °ªÀÎµ¥ 2¸¦ ³ÖÀ¸¸é Çã¿¸°ÔµÊ.
+                SetLineColor(y, c % 2 == 1 ? new Color(500 / 255f, 500 / 255f, 500 / 255f) : Color.white); // 0~1 ê°’ì¸ë° 2ë¥¼ ë„£ìœ¼ë©´ í—ˆì˜‡ê²Œë¨.
             }
             yield return new WaitForSeconds(0.05f);
         }
@@ -98,14 +98,14 @@ public class Grid
     }
 
 
-    // ½ºÆäÀÌ½º¹Ù ´­·¶À»¶§ ºí·°ÀÌ Ã³À½ ºÎµúÈ÷´Â y À§Ä¡
+    // ìŠ¤í˜ì´ìŠ¤ë°” ëˆŒë €ì„ë•Œ ë¸”ëŸ­ì´ ì²˜ìŒ ë¶€ë”ªíˆëŠ” y ìœ„ì¹˜
 
 
 
     public List<int> GetCompletedLineYPos()
     {
         List<int> comple = new List<int>();
-        for (int i = Size.y - 1; i >= 0; i--) // ¸Ç À§¿¡¼­ºÎÅÍ »èÁ¦ÇÏ±âÀ§ÇØ ¿ª¼øÀ¸·Î
+        for (int i = Size.y - 1; i >= 0; i--) // ë§¨ ìœ„ì—ì„œë¶€í„° ì‚­ì œí•˜ê¸°ìœ„í•´ ì—­ìˆœìœ¼ë¡œ
         {
             var isCompleted = IsThisLineComplete(i);
             if (isCompleted)
@@ -139,7 +139,7 @@ public class Grid
             grid[k, y].go = null;
         }
 
-        for (int i = y + 1; i < Size.y; i++) // »èÁ¦µÈ ÁÙ À§¿¡ dots ÇÑÁÙ¾¿ ³»¸®´Â°úÁ¤
+        for (int i = y + 1; i < Size.y; i++) // ì‚­ì œëœ ì¤„ ìœ„ì— dots í•œì¤„ì”© ë‚´ë¦¬ëŠ”ê³¼ì •
         {
             for (int k = 0; k < Size.x; k++)
             {
@@ -172,7 +172,7 @@ public class Grid
 
 
 
-// grid »óÀÇ ³×¸ğ ÇÑÄ­( 
+// grid ìƒì˜ ë„¤ëª¨ í•œì¹¸( 
 public class Dot
 {
     public int IsDot = 0;

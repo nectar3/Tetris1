@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,8 +11,8 @@ public class Block : MonoBehaviour
 
     [HideInInspector]
     public float downGapSec = 0.3f;
-    public bool Is360DegreeFlip = true; // 4¹æÇâ È¸ÀüÀÎÁö ÀÏÀÚºí·°Ã³·³ 90µµ È¸Àü ÈÄ ¿øÀ§Ä¡ÀÎÁö
-    public bool PreventTurn = false; // ³×¸ğºí·°Àº È¸Àü ±İÁö
+    public bool Is360DegreeFlip = true; // 4ë°©í–¥ íšŒì „ì¸ì§€ ì¼ìë¸”ëŸ­ì²˜ëŸ¼ 90ë„ íšŒì „ í›„ ì›ìœ„ì¹˜ì¸ì§€
+    public bool PreventTurn = false; // ë„¤ëª¨ë¸”ëŸ­ì€ íšŒì „ ê¸ˆì§€
 
     [HideInInspector]
     public GameObject dotsParent;
@@ -23,7 +23,7 @@ public class Block : MonoBehaviour
     public Vector2[] DotsLocalPosition = new Vector2[4];
 
     bool isDone = false;
-    bool isTurned = false; // 90µµ ¿ø»óº¹±ÍÇÒ °æ¿ì
+    bool isTurned = false; // 90ë„ ì›ìƒë³µê·€í•  ê²½ìš°
 
     void Start()
     {
@@ -33,7 +33,7 @@ public class Block : MonoBehaviour
 
     void Init()
     {
-        // localpositionÀÌ (0, 0)ÀÎ dotÀÌ È¸ÀüÀÇ Áß½ÉÃàÀÌ µÊ
+        // localpositionì´ (0, 0)ì¸ dotì´ íšŒì „ì˜ ì¤‘ì‹¬ì¶•ì´ ë¨
         for (int i = 0; i < DotsLocalPosition.Length; i++)
         {
             dots[i] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
@@ -59,7 +59,7 @@ public class Block : MonoBehaviour
 
             SynchGrid();
 
-            isTurned = !isTurned; // Åä±Û
+            isTurned = !isTurned; // í† ê¸€
         }
     }
 
@@ -86,8 +86,8 @@ public class Block : MonoBehaviour
         return true;
     }
 
-    // È¾ÀÌµ¿Àº block ÀÚÃ¼¿¡¼­ Àû¿ë
-    // È¸Àü ÈÄ µÇ´Â Æ÷Áö¼Ç ³ª¿Ã¶§±îÁö È¾ÀÌµ¿ 5¹ø(Xoffset) ½ÃÇàÈÄ µÇ´Â offset¸®ÅÏ. È¸Àü ÀÚÃ¼°¡ ¾ÈµÇ¸é null
+    // íš¡ì´ë™ì€ block ìì²´ì—ì„œ ì ìš©
+    // íšŒì „ í›„ ë˜ëŠ” í¬ì§€ì…˜ ë‚˜ì˜¬ë•Œê¹Œì§€ íš¡ì´ë™ 5ë²ˆ(Xoffset) ì‹œí–‰í›„ ë˜ëŠ” offsetë¦¬í„´. íšŒì „ ìì²´ê°€ ì•ˆë˜ë©´ null
     int? GetTurnRightAndMoveHorizontalXOffset()
     {
         int[] Xoffset = { 0, 1, -1, 2, -2 };
@@ -156,7 +156,7 @@ public class Block : MonoBehaviour
         }
     }
 
-    // ½ºÆäÀÌ½º¹Ù ´­·¶À»¶§: ºí·° ÇöÀçÀ§Ä¡ºÎÅÍ ÇÑÄ­¾¿ ¾Æ·¡·Î ³»·Áº¸´Ù°¡, ¸·È÷´Â ÁöÁ¡ÀÇ ¹Ù·Î À§°¡ ³õ¾ÆÁú ºÎºĞÀÌ´Ù(y_offset - 1)
+    // ìŠ¤í˜ì´ìŠ¤ë°” ëˆŒë €ì„ë•Œ: ë¸”ëŸ­ í˜„ì¬ìœ„ì¹˜ë¶€í„° í•œì¹¸ì”© ì•„ë˜ë¡œ ë‚´ë ¤ë³´ë‹¤ê°€, ë§‰íˆëŠ” ì§€ì ì˜ ë°”ë¡œ ìœ„ê°€ ë†“ì•„ì§ˆ ë¶€ë¶„ì´ë‹¤(y_offset - 1)
     public int GetFirstHitYPos()
     {
         int y_offset = 1;
@@ -192,7 +192,7 @@ public class Block : MonoBehaviour
         return true;
     }
 
-    // ¾Æ·¡·Î ÁøÇàÇØµµ µÇ¸é true
+    // ì•„ë˜ë¡œ ì§„í–‰í•´ë„ ë˜ë©´ true
     bool IsItOkToGoDownSide()
     {
         var bottomY = GetBottomDotsPosY();
@@ -284,7 +284,7 @@ public class Block : MonoBehaviour
             Grid.I.SetGridDone(dots[i].transform.position);
             Grid.I.SetDotGameObject(dots[i].transform.position, dots[i]);
 
-            dots[i].transform.SetParent(dotsParent.transform); // ³õÀ»¶§ dots go¸¸ ³²±â
+            dots[i].transform.SetParent(dotsParent.transform); // ë†“ì„ë•Œ dots goë§Œ ë‚¨ê¸°
         }
         Destroy(gameObject);
     }
