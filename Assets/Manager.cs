@@ -11,6 +11,7 @@ public class Manager : MonoBehaviour
 
     public GameObject BlockPref;
     public Transform spawnPoint;
+    public GameObject dotsParent;
 
     public TextMeshProUGUI textGrid;
     public Grid grid;
@@ -19,8 +20,7 @@ public class Manager : MonoBehaviour
     {
         var grid = Grid.I; // init
 
-        var block = Instantiate(BlockPref, spawnPoint.position, Quaternion.identity);
-
+        MakeNewBlock();
 
         StartCoroutine(ShowGridText());
     }
@@ -33,7 +33,6 @@ public class Manager : MonoBehaviour
             textGrid.SetText(str);
         }
     }
-
     private static Manager instance = null;
     void Awake()
     {
@@ -50,12 +49,27 @@ public class Manager : MonoBehaviour
         get
         {
             if (null == instance)
-            {
                 return null;
-            }
             return instance;
         }
     }
+
+    public void CurBlockPutted()
+    {
+        Grid.I.CheckAllLineComplete();
+
+        if (Grid.I.CheckDie())
+        {
+            Time.timeScale = 0;
+        }
+
+
+        //StartCoroutine(Grid.I.BlinkLine());
+
+
+        Manager.I.MakeNewBlock();
+    }
+
 
     int c = 0;
     public void MakeNewBlock()
@@ -63,6 +77,7 @@ public class Manager : MonoBehaviour
         var block = Instantiate(BlockPref, spawnPoint.position, Quaternion.identity);
         block.name = "block" + c++;
 
+        block.GetComponent<Block>().dotsParent = dotsParent;
     }
 
     void OnDrawGizmos()

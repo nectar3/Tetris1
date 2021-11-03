@@ -12,6 +12,7 @@ public class Block : MonoBehaviour
 
     public float downGapSec = 0.3f;
     public bool Is360DegreeFlip = true; // 4방향 회전인지 일자블럭처럼 90도 회전 후 원위치인지
+    public GameObject dotsParent;
 
     GameObject[] dots = new GameObject[4];
 
@@ -28,6 +29,9 @@ public class Block : MonoBehaviour
         StartCoroutine(MoveCorou());
     }
 
+
+    //TODO: <줄삭제 구현> grid에서 역참조해서 BLock의 dot을 삭제. Dic 사용?
+    // 1. 블럭 fix 시 각 dots 4개 
 
     void Init()
     {
@@ -222,13 +226,12 @@ public class Block : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(downGapSec);
-            //Debug.Log("MoveCorou");
 
             if (IsItOkToGoDownSide() == false)
             {
                 isDone = true;
                 SetGridDone();
-                Manager.I.MakeNewBlock();
+                Manager.I.CurBlockPutted();
                 break;
             }
 
@@ -243,10 +246,12 @@ public class Block : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             Grid.I.SetGridDone(dots[i].transform.position);
+            Grid.I.SetDotGo(dots[i].transform.position, dots[i]);
+
+            dots[i].transform.SetParent(dotsParent.transform); // 놓을때 dots go만 남기
         }
+        Destroy(gameObject);
     }
-
-
 
 
 }

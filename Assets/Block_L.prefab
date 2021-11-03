@@ -45,7 +45,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DotsPref: {fileID: 4969624384879370860, guid: 20bdfc48698ad8d46883f000350b77a0, type: 3}
   point: {fileID: 0}
-  downGapSec: 0.2
+  downGapSec: 0.1
+  Is360DegreeFlip: 1
+  dotsParent: {fileID: 0}
   DotsLocalPosition:
   - {x: -1, y: 1}
   - {x: -1, y: 0}
