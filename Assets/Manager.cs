@@ -27,7 +27,7 @@ public class Manager : MonoBehaviour
         var grid = Grid.I; // init
 
         MakeNewBlock();
-
+        //dd
     }
 
     private static Manager instance = null;
