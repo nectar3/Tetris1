@@ -8,11 +8,13 @@ public class Block : MonoBehaviour
 {
 
     public GameObject DotsPref;
-    public Transform point;
 
     [HideInInspector]
     public float downGapSec = 0.3f;
     public bool Is360DegreeFlip = true; // 4방향 회전인지 일자블럭처럼 90도 회전 후 원위치인지
+    public bool PreventTurn = false; // 네모블럭은 회전 금지
+
+    [HideInInspector]
     public GameObject dotsParent;
 
     GameObject[] dots = new GameObject[4];
@@ -21,7 +23,7 @@ public class Block : MonoBehaviour
     public Vector2[] DotsLocalPosition = new Vector2[4];
 
     bool isDone = false;
-    bool isTurned = false;
+    bool isTurned = false; // 90도 원상복귀할 경우
 
     void Start()
     {
@@ -31,11 +33,13 @@ public class Block : MonoBehaviour
 
     void Init()
     {
+        // localposition이 (0, 0)인 dot이 회전의 중심축이 됨
         for (int i = 0; i < DotsLocalPosition.Length; i++)
         {
             dots[i] = Instantiate(DotsPref, Vector2.zero, Quaternion.identity, this.transform);
             dots[i].transform.localPosition = new Vector2(DotsLocalPosition[i].x, DotsLocalPosition[i].y);
         }
+
     }
 
 
@@ -53,7 +57,6 @@ public class Block : MonoBehaviour
             }
             transform.position = transform.position + new Vector3((float)Xoffset, 0, 0);
 
-            Debug.Log(dots[0].transform.localPosition);
             SynchGrid();
 
             isTurned = !isTurned; // 토글
@@ -113,7 +116,8 @@ public class Block : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
-            TurnRight();
+            if (!PreventTurn)
+                TurnRight();
         }
         else if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
@@ -278,7 +282,7 @@ public class Block : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             Grid.I.SetGridDone(dots[i].transform.position);
-            Grid.I.SetDotGo(dots[i].transform.position, dots[i]);
+            Grid.I.SetDotGameObject(dots[i].transform.position, dots[i]);
 
             dots[i].transform.SetParent(dotsParent.transform); // 놓을때 dots go만 남기
         }

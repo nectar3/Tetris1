@@ -9,13 +9,13 @@ using TMPro;
 public class Manager : MonoBehaviour
 {
 
-    public GameObject BlockPref;
+    public List<GameObject> BlockPref;
     public Transform spawnPoint;
     public GameObject dotsParent;
 
     public TextMeshProUGUI text_score;
-
     public TextMeshProUGUI textGrid;
+    public GameObject panelGameOver;
     public Grid grid;
 
     public float blockDownSec = 0.4f; // 블럭 내려오는 시간간격
@@ -67,6 +67,7 @@ public class Manager : MonoBehaviour
         if (Grid.I.CheckDie())
         {
             Time.timeScale = 0;
+            panelGameOver.SetActive(true);
             return;
         }
         if (completedLinesY.Count > 0)
@@ -84,7 +85,7 @@ public class Manager : MonoBehaviour
     int c = 0;
     public void MakeNewBlock()
     {
-        var block = Instantiate(BlockPref, spawnPoint.position, Quaternion.identity);
+        var block = Instantiate(BlockPref[Random.Range(0, BlockPref.Count)], spawnPoint.position, Quaternion.identity);
         block.name = "block" + c++;
         block.GetComponent<Block>().dotsParent = dotsParent;
         block.GetComponent<Block>().downGapSec = blockDownSec;

@@ -163,7 +163,7 @@ public class Grid
                 grid[i, y].go.GetComponent<Dots>().SetColor(col);
         }
     }
-    public void SetDotGo(Vector3 pos, GameObject go)
+    public void SetDotGameObject(Vector3 pos, GameObject go)
     {
         if (grid[(int)pos.x, (int)pos.y].IsDot == 2)
             grid[(int)pos.x, (int)pos.y].go = go;
